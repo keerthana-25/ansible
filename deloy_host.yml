@@ -1,0 +1,40 @@
+---
+- name: Deploy Flask webserver
+  hosts: webservers
+  become: true
+  tasks:
+    - block:
+        - name: Install Python3 and Flask
+          yum:
+            name:
+              - python3
+              - python3-pip
+            state: present
+
+        - name: Install Flask with pip
+          pip:
+            name: flask
+            executable: pip3
+
+        - name: Copy Flask app
+          template:
+            src: app.py
+            dest: /home/ec2-user/app.py
+          vars:
+            hostname: "{{ inventory_hostname }}" 
+
+        - name: Run Flask app in background
+          shell: nohup python3 /home/ec2-user/app.py > /home/ec2-user/app.log 2>&1 &
+      tags: deploy
+
+- name: Un-deploy Flask webserver
+  hosts: webservers
+  become: true
+  tasks:
+    - block:
+        - name: Kill Flask app
+          shell: pkill -f app.py || true
+          failed_when: false
+
+      tags: undeploy
+
