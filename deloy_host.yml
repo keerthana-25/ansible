@@ -1,4 +1,3 @@
----
 - name: Deploy Flask webserver
   hosts: webservers
   become: true
@@ -36,5 +35,9 @@
           shell: pkill -f app.py || true
           failed_when: false
 
+        - name: Remove Flask app file        
+          file:
+            path: /home/ec2-user/app.py
+            state: absent
       tags: undeploy
 
