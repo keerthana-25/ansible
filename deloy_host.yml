@@ -3,7 +3,7 @@
   become: true
   tasks:
     - block:
-        - name: Install Python3 and Flask
+        - name: Install python3 and pip
           yum:
             name:
               - python3
@@ -32,7 +32,7 @@
   tasks:
     - block:
         - name: Kill Flask app
-          shell: pkill -f app.py || true
+          shell: pkill -f app.py 
           failed_when: false
 
         - name: Remove Flask app file        
